@@ -1,6 +1,7 @@
 const Record = require('../models/recordModel')
 const mongoose = require('mongoose')
 
+
 const getAllRecords = async (req, res) => {
     const records = await Record.find({}).sort({ year: 1, month: 1 })
 
@@ -10,6 +11,26 @@ const getAllRecords = async (req, res) => {
 
 const createRecord = async (req, res) => {
     const { year, month, amount } = req.body
+
+    let emptyFields = []
+
+    if(!year){
+        emptyFields.push('year')
+    }
+
+    if(!month){
+        emptyFields.push('month')
+    }
+
+    if(!amount){
+        emptyFields.push('amount')
+    }
+
+    if(emptyFields.length > 0){
+        return res.status(400).json({error: 'Please fill in all fields.', emptyFields})
+    }
+
+
     try{
         const record = await Record.create({year, month, amount})
         res.status(200).json(record)
