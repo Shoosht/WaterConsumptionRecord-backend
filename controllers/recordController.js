@@ -3,14 +3,16 @@ const mongoose = require('mongoose')
 
 
 const getAllRecords = async (req, res) => {
-    const records = await Record.find({}).sort({ year: 1, month: 1 })
+    const user_id = req.user._id
+
+    const records = await Record.find({user_id}).sort({ year: 1, month: 1 })
 
     res.status(200).json(records)
 }
 
 
 const createRecord = async (req, res) => {
-    const { year, month, amount } = req.body
+    const { year, month, amount, paid } = req.body
 
     let emptyFields = []
 
@@ -32,7 +34,8 @@ const createRecord = async (req, res) => {
 
 
     try{
-        const record = await Record.create({year, month, amount})
+        const user_id = req.user._id
+        const record = await Record.create({year, month, amount, user_id, paid})
         res.status(200).json(record)
     }catch(error){
         res.status(400).json({error: error.message})
@@ -64,7 +67,7 @@ const updateRecord = async (req, res) => {
         return res.status(404).json({error: 'This record does not exist'})
     }
 
-    const record = await Record.findByIdAndUpdate({_id: id}, {...req.body})
+    const record = await Record.findByIdAndUpdate({_id: id}, {...req.body}, {new: true})
 
     if (!record) {
         return res.status(404).json({error: 'This record does not exist'})
