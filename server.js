@@ -4,6 +4,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const recordRoutes = require('./routes/records')
 const userRoutes = require('./routes/users')
+const billRoutes = require('./routes/bills')
 
 const app = express()
 
@@ -11,6 +12,7 @@ app.use(express.json())
 
 app.use('/api/records', recordRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/bills', billRoutes)
 
 app.use((req, res, next)=>{
     console.log(req.path, req.method)

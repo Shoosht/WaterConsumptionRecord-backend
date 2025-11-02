@@ -13,7 +13,19 @@ const userSchema = new Schema({
     password:{
         type: String,
         required: true
-    }
+    },
+    city:{
+        type: String,
+    },
+    address:{
+        type: String,
+    },
+    name:{
+        type: String,
+    },
+    surname:{
+        type: String,
+    },
 })
 
 userSchema.statics.login = async function(email, password) {
