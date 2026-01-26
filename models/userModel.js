@@ -16,15 +16,19 @@ const userSchema = new Schema({
     },
     city:{
         type: String,
+        default: ''
     },
     address:{
         type: String,
+        default: ''
     },
     name:{
         type: String,
+        default: ''
     },
-    surname:{
-        type: String,
+    monthlyLimit: {
+        type: Number,
+        default: 1000
     },
 })
 
