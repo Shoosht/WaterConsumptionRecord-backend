@@ -70,4 +70,16 @@ const updateUser = async (req, res) =>{
     }
 }
 
-module.exports = { loginUser, signupUser, updateUser }
+const changePassword = async (req, res) => {
+    const { id } = req.params
+    const { currentPassword, newPassword } = req.body
+
+    try {
+        await User.changePassword(id, currentPassword, newPassword)
+        res.status(200).json({ message: 'Password changed successfully' })
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+}
+
+module.exports = { loginUser, signupUser, updateUser, changePassword }
