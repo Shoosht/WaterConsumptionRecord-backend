@@ -1,6 +1,7 @@
 const Record = require('../models/recordModel')
+const User = require('../models/userModel')
 const mongoose = require('mongoose')
-
+const { sendLimitExceededEmail } = require('../utils/emailUtil');
 
 const getAllRecords = async (req, res) => {
     const user_id = req.user._id
@@ -33,12 +34,32 @@ const createRecord = async (req, res) => {
     }
 
 
-    try{
+    try {
         const user_id = req.user._id
-        const record = await Record.create({year, month, amount, user_id, paid})
-        res.status(200).json(record)
-    }catch(error){
-        res.status(400).json({error: error.message})
+        const record = await Record.create({ year, month, amount, user_id, paid });
+        
+        const user = await User.findById(user_id);
+        
+        console.log('user backend:', user);
+
+        if (user && user.monthlyLimit && amount > user.monthlyLimit) {
+            try {
+                const previewUrl = await sendLimitExceededEmail(
+                    user.email,
+                    amount,
+                    user.monthlyLimit,
+                    month,
+                    year
+                );
+                console.log('Email preview URL:', previewUrl);
+            } catch (emailError) {
+                console.error('Failed to send email:', emailError);
+            }
+        }
+        
+        res.status(200).json(record);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 }
 
