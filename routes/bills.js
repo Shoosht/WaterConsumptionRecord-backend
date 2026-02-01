@@ -1,8 +1,9 @@
 const express = require('express')
 const {
-    getAllBills,
-    createBill,
-    updateBill
+	getAllBills,
+	createBill,
+	updateBill,
+	deleteBill
 } = require('../controllers/billController')
 const requireAuth = require('../middleware/requireAuth')
 
@@ -15,5 +16,7 @@ router.get('/', getAllBills)
 router.post('/', createBill)
 
 router.patch('/:id', updateBill)
+
+router.delete('/:id', deleteBill)
 
 module.exports = router
