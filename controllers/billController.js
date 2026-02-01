@@ -40,9 +40,21 @@ const updateBill = async (req, res) => {
     res.status(200).json(bill)
 }
 
+const deleteBill = async (req, res) => {
+    const { id } = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error: 'This bill does not exist'})
+    }
+    const bill = await Bill.findOneAndDelete({record_id: id})
+    if (!bill) {
+        return res.status(404).json({error: 'This bill does not exist'})
+    }
+    res.status(200).json(bill)
+}
 
 module.exports = {
     getAllBills, 
     createBill,
-    updateBill
+    updateBill,
+    deleteBill
 }

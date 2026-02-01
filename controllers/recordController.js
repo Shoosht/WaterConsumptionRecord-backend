@@ -40,7 +40,7 @@ const createRecord = async (req, res) => {
         
         const user = await User.findById(user_id);
         
-        console.log('user backend:', user);
+
 
         if (user && user.monthlyLimit && amount > user.monthlyLimit) {
             try {
@@ -94,6 +94,24 @@ const updateRecord = async (req, res) => {
         return res.status(404).json({error: 'This record does not exist'})
     }
 
+    const user_id = req.user._id
+    const user = await User.findById(user_id);
+    
+    if (user && user.monthlyLimit && record.amount > user.monthlyLimit) {
+        try {
+            const previewUrl = await sendLimitExceededEmail(
+                user.email,
+                record.amount,
+                user.monthlyLimit,
+                record.month,
+                record.year
+            );
+            console.log('Email preview URL:', previewUrl);
+        } catch (emailError) {
+            console.error('Failed to send email:', emailError);
+        }
+    }
+
     res.status(200).json(record)
 }
 
@@ -103,4 +121,4 @@ module.exports = {
     getAllRecords,
     deleteRecord,
     updateRecord
- }
+}
