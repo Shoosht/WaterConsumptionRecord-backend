@@ -50,4 +50,50 @@ const sendLimitExceededEmail = async (userEmail, amount, monthlyLimit, month, ye
     }
 };
 
-module.exports = { sendLimitExceededEmail };
+const sendForgotPasswordEmail = async (userEmail, resetToken) => {
+    try {
+        const transporter = await createTransporter();
+        
+        const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+        
+        const info = await transporter.sendMail({
+            from: '<alert@waterconsumption.com>',
+            to: userEmail,
+            subject: 'Password Reset Request',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #2982bd;">Password Reset Request</h2>
+                    <p>You requested to reset your password. Click the button below to reset it:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${resetUrl}" style="background-color: #2982bd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                            Reset Password
+                        </a>
+                    </div>
+                    <p style="color: #666;">Or copy and paste this link into your browser:</p>
+                    <p style="background-color: #f4f4f4; padding: 10px; word-break: break-all; font-size: 12px;">
+                        ${resetUrl}
+                    </p>
+                    <p style="color: #dc3545; font-size: 14px; margin-top: 20px;">
+                        <strong>This link will expire in 1 hour.</strong>
+                    </p>
+                    <p style="color: #666; font-size: 12px; margin-top: 30px;">
+                        If you didn't request this, please ignore this email. Your password will remain unchanged.
+                    </p>
+                    <p style="color: #666; font-size: 12px;">
+                        This is an automated message from Water Consumption Record. Please do not reply.
+                    </p>
+                </div>
+            `
+        });
+        
+        console.log('Password reset email sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        
+        return nodemailer.getTestMessageUrl(info);
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
+        throw error;
+    }
+};
+ 
+module.exports = { sendLimitExceededEmail, sendForgotPasswordEmail };

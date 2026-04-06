@@ -30,6 +30,12 @@ const userSchema = new Schema({
         type: Number,
         default: 1000
     },
+    resetPasswordToken: {
+        type: String
+    },
+    resetPasswordExpires: {
+        type: Date
+    },
 })
 
 userSchema.statics.login = async function(email, password) {
