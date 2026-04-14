@@ -54,7 +54,7 @@ const sendForgotPasswordEmail = async (userEmail, resetToken) => {
     try {
         const transporter = await createTransporter();
         
-        const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+        const reset_url = `http://localhost:3000/reset-password/${resetToken}`;
         
         const info = await transporter.sendMail({
             from: '<alert@waterconsumption.com>',
@@ -65,13 +65,13 @@ const sendForgotPasswordEmail = async (userEmail, resetToken) => {
                     <h2 style="color: #2982bd;">Password Reset Request</h2>
                     <p>You requested to reset your password. Click the button below to reset it:</p>
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="${resetUrl}" style="background-color: #2982bd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        <a href="${reset_url}" style="background-color: #2982bd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
                             Reset Password
                         </a>
                     </div>
                     <p style="color: #666;">Or copy and paste this link into your browser:</p>
                     <p style="background-color: #f4f4f4; padding: 10px; word-break: break-all; font-size: 12px;">
-                        ${resetUrl}
+                        ${reset_url}
                     </p>
                     <p style="color: #dc3545; font-size: 14px; margin-top: 20px;">
                         <strong>This link will expire in 1 hour.</strong>
@@ -95,5 +95,37 @@ const sendForgotPasswordEmail = async (userEmail, resetToken) => {
         throw error;
     }
 };
+
+const sendReminderEmail = async (userEmail, month, year) => {
+	try {
+		const transporter = await createTransporter();
+		
+        const site_url = "http://localhost:3000";
+
+		const info = await transporter.sendMail({
+			from: '<alert@waterconsumption.com>',
+			to: userEmail,
+			subject: 'Action Required: Monthly Water Record Missing',
+			html: `
+				<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+					<h2 style="color: #2982bd;">Monthly Record Reminder</h2>
+					<p>We noticed you haven't logged your water consumption for <strong>${month} ${year}</strong> yet.</p>
+					<div style="text-align: center; margin: 30px 0;">
+						<a href="${site_url}" style="background-color: #2982bd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+							Log Record Now
+						</a>
+					</div>
+					<p style="color: #666; font-size: 12px;">
+						If you have already submitted your record in the last few minutes, please ignore this email.
+					</p>
+				</div>
+			`
+		});
+
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+	} catch (error) {
+		console.error('Email reminder failed:', error);
+	}
+};
  
-module.exports = { sendLimitExceededEmail, sendForgotPasswordEmail };
+module.exports = { sendLimitExceededEmail, sendForgotPasswordEmail, sendReminderEmail };

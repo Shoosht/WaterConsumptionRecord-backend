@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const recordRoutes = require('./routes/records')
 const userRoutes = require('./routes/users')
 const billRoutes = require('./routes/bills')
+const startReminderCron = require('./utils/sendReminder')
 
 const app = express()
 
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(()=>{
         app.listen(process.env.PORT, () =>{
             console.log('listening to the port and connected to the db')
+            startReminderCron();
         })
     })
     .catch((error)=>{
